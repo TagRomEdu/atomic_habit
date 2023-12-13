@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import generics
 
-# Create your views here.
+from habits_app.serializers import HabitSerializer
+
+
+class HabitCreateAPIView(generics.CreateAPIView):
+    serializer_class = HabitSerializer
