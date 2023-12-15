@@ -21,7 +21,7 @@ class Habit(models.Model):
     place = models.CharField(_("place"), max_length=200)
     time = models.TimeField(_("time"))
     activity = models.TextField(_("activity"))
-    pleasant_habit = models.ForeignKey(to='self', on_delete=models.CASCADE,  **NULLABLE, related_name='pleasant_set')
+    is_pleasant = models.BooleanField(_("pleasant habit"), default=False)
     related_habit = models.ForeignKey(to='self', on_delete=models.CASCADE, **NULLABLE, related_name='related_set')
     period = models.CharField(_("period"), max_length=50, choices=PERIODS, default=PERIOD_DAILY)
     reward = models.TextField(_("reward"), **NULLABLE)
