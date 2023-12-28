@@ -29,10 +29,8 @@ def get_tg_user_id():
     for user in User.objects.filter(~Q(telegram=None)):
         
         response = requests.get(f'{settings.TG_URL}/bot{settings.TG_BOT_API}/getUpdates').json()
-        print(response)
         user_id = next((item["message"]["from"]["id"] for item in response["result"] if
                                 item["message"]["from"]["username"] == user.telegram), None)
-        print(user_id)
 
         if user_id:
             user.tg_id = user_id
@@ -57,7 +55,6 @@ def tg_integration():
     if habits:
         for habit in habits:
             if habit.owner.tg_id:
-                print(habit.owner.tg_id)
                 params = {
                     'chat_id': habit.owner.tg_id,
                     'text': habit
