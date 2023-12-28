@@ -9,12 +9,24 @@ NULLABLE = {'blank': True, 'null': True}
 class Habit(models.Model):
     PERIOD_HOURLY = 'hourly'
     PERIOD_DAILY = 'daily'
-    PERIOD_WEEKLY = 'weekly'
+    MONDAY = 'monday'
+    TUESDAY = 'tuesday'
+    WEDNESDAY = 'wednesday'
+    THURSDAY = 'thursday'
+    FRIDAY = 'friday'
+    SATURDAY = 'saturday'
+    SUNDAY = 'sunday'
 
     PERIODS = (
         (PERIOD_HOURLY, 'Ежечасно'),
         (PERIOD_DAILY, 'Ежедневно'),
-        (PERIOD_WEEKLY, 'Еженедельно')
+        (MONDAY, 'Понедельник'),
+        (TUESDAY, 'Вторник'),
+        (WEDNESDAY, 'Среда'),
+        (THURSDAY, 'Четверг'),
+        (FRIDAY, 'Пятница'),
+        (SATURDAY, 'Суббота'),
+        (SUNDAY, 'Воскресенье'),
     )
 
     owner = models.ForeignKey(to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -29,7 +41,7 @@ class Habit(models.Model):
     is_published = models.BooleanField(_("published"), default=False)
 
     def __str__(self):
-        return f'{self.pk} - {self.activity}'
+        return f'{self.activity} в {self.time} в месте под названием "{self.place}".'
 
     class Meta:
         verbose_name = "Привычка"
