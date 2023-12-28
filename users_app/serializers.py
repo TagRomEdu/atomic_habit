@@ -14,10 +14,12 @@ class UserSerializer(serializers.ModelSerializer):
         """
         Метод создания нового пользователя.
         """
-        password = validated_data.pop('password', None)  # Достаем пароль из входных данных
-        instance = User.objects.create(**validated_data)  # Создаем новый экземпляр пользователя
+        # Достаем пароль из входных данных
+        password = validated_data.pop('password', None)
+        # Создаем новый экземпляр пользователя
+        instance = User.objects.create(**validated_data)
+        # Устанавливаем хэшированный пароль
         if password is not None:
-            instance.set_password(password)  # Устанавливаем хэшированный пароль
+            instance.set_password(password)
             instance.save()
             return instance
-        

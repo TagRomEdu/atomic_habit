@@ -11,7 +11,7 @@ class Command(BaseCommand):
             last_name='T',
             is_staff=True,
             is_superuser=True,
-            telegram ='Tagrom',
+            telegram='Tagrom',
         )
 
         user.set_password('Aa12345!')

@@ -1,6 +1,5 @@
 from rest_framework import generics
 
-from users_app.models import User
 from users_app.serializers import UserSerializer
 
 
@@ -9,4 +8,3 @@ class UserCreateAPIView(generics.CreateAPIView):
     Контроллер для создания пользователя.
     """
     serializer_class = UserSerializer
- 

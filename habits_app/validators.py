@@ -19,12 +19,18 @@ class RewardPleasantValidator:
         is_pleasant = dict(value).get(self.field_3)
         if is_pleasant:
             if reward:
-                raise ValidationError("У приятной привычки не может быть награды.")
+                raise ValidationError(
+                    "У приятной привычки не может быть награды."
+                    )
         if related_habit:
             if reward:
-                raise ValidationError("У привязываемой привычки не может быть награды.")
+                raise ValidationError(
+                    "У привязываемой привычки не может быть награды."
+                    )
             if not is_pleasant:
-                raise ValidationError("Чтобы связать привычку, она должна быть приятной.")
+                raise ValidationError(
+                    "Чтобы связать привычку, она должна быть приятной."
+                    )
 
 
 class TimeValidator:
@@ -37,4 +43,7 @@ class TimeValidator:
     def __call__(self, value):
         time = dict(value).get(self.field_1)
         if int(time) > 120:
-            raise ValidationError("Время выполнения привычки не должно быть более 120 секунд, капуша!")
+            raise ValidationError(
+                "Время выполнения привычки не должно быть более 120 секунд, "
+                "капуша!"
+                )

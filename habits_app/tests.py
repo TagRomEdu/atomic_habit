@@ -84,8 +84,10 @@ class HabitTestCase(APITestCase):
         with connection.cursor() as cursor:
             # Сброс идентификаторов пользователей и привычек
             cursor.execute("""
-                SELECT setval(pg_get_serial_sequence('"users_app_user"','id'), 1, false);
-                SELECT setval(pg_get_serial_sequence('"habits_app_habit"','id'), 1, false);
+                SELECT setval(pg_get_serial_sequence(
+                           '"users_app_user"','id'), 1, false);
+                SELECT setval(pg_get_serial_sequence(
+                           '"habits_app_habit"','id'), 1, false);
             """)
 
     def test_get_habit_list(self):
@@ -122,7 +124,9 @@ class HabitTestCase(APITestCase):
         """
 
         response = self.client.get(
-            reverse('habits_app:retrieve_habit', kwargs={'pk': self.another_habit.pk}),
+            reverse('habits_app:retrieve_habit',
+                    kwargs={'pk': self.another_habit.pk}
+                    ),
         )
 
         self.assertEqual(
@@ -193,10 +197,13 @@ class HabitTestCase(APITestCase):
             data=data
         )
 
-        wished_answer = {'id': 1, 'place': 'underdark', 'time': '13:13:00', 
-                         'activity': 'to fear or not to fear', 'is_pleasant': False, 
-                         'period': 'daily', 'reward': None, 'time_required': 100, 
-                         'is_published': False, 'owner': 1, 'related_habit': None}
+        wished_answer = {'id': 1, 'place': 'underdark', 'time': '13:13:00',
+                         'activity': 'to fear or not to fear',
+                         'is_pleasant': False, 'period': 'daily',
+                         'reward': None, 'time_required': 100,
+                         'is_published': False, 'owner': 1,
+                         'related_habit': None
+                         }
 
         self.assertEqual(
             response.status_code,
@@ -243,7 +250,8 @@ class HabitTestCase(APITestCase):
         }
 
         response = self.client.put(
-            reverse('habits_app:update_habit', kwargs={'pk': self.another_habit.pk}),
+            reverse('habits_app:update_habit',
+                    kwargs={'pk': self.another_habit.pk}),
             data=data
         )
 
@@ -254,7 +262,8 @@ class HabitTestCase(APITestCase):
 
     def test_habit_patch(self):
         """
-        Тестирование частичного обновления привычки пользователем (валидными данными).
+        Тестирование частичного обновления привычки пользователем
+        (валидными данными).
         """
 
         data = {
@@ -267,10 +276,11 @@ class HabitTestCase(APITestCase):
             data=data
         )
 
-        wished_answer = {'id': 1, 'place': 'underdark', 'time': '00:00:00', 
-                         'activity': 'say hello', 'is_pleasant': False, 
-                         'period': 'daily', 'reward': None, 'time_required': 100, 
-                         'is_published': True, 'owner': 1, 'related_habit': None}
+        wished_answer = {'id': 1, 'place': 'underdark', 'time': '00:00:00',
+                         'activity': 'say hello', 'is_pleasant': False,
+                         'period': 'daily', 'reward': None,
+                         'time_required': 100, 'is_published': True,
+                         'owner': 1, 'related_habit': None}
 
         self.assertEqual(
             response.status_code,
@@ -284,7 +294,8 @@ class HabitTestCase(APITestCase):
 
     def test_invalid_habit_patch(self):
         """
-        Тестирование частичного обновления привычки пользователем (невалидными данными).
+        Тестирование частичного обновления привычки пользователем
+        (невалидными данными).
         """
 
         data = {
@@ -312,7 +323,8 @@ class HabitTestCase(APITestCase):
         }
 
         response = self.client.put(
-            reverse('habits_app:update_habit', kwargs={'pk': self.another_habit.pk}),
+            reverse('habits_app:update_habit',
+                    kwargs={'pk': self.another_habit.pk}),
             data=data
         )
 
@@ -341,7 +353,8 @@ class HabitTestCase(APITestCase):
         """
 
         response = self.client.delete(
-            reverse('habits_app:destroy_habit', kwargs={'pk': self.another_habit.pk}),
+            reverse('habits_app:destroy_habit',
+                    kwargs={'pk': self.another_habit.pk}),
         )
 
         self.assertEqual(
@@ -370,16 +383,16 @@ class HabitTestCase(APITestCase):
             - нельзя выбрать одновременно вознаграждение и связанную привычку.
         """
 
-        data = {'id': 5, 
-                'place': 'underdark', 
-                'time': '13:13:00', 
-                'activity': 'to fear or not to fear', 
-                'is_pleasant': True, 
-                'period': 'daily', 
-                'reward': "GLOOORYYY", 
-                'time_required': 100, 
-                'is_published': False, 
-                'owner': 1, 
+        data = {'id': 5,
+                'place': 'underdark',
+                'time': '13:13:00',
+                'activity': 'to fear or not to fear',
+                'is_pleasant': True,
+                'period': 'daily',
+                'reward': "GLOOORYYY",
+                'time_required': 100,
+                'is_published': False,
+                'owner': 1,
                 }
 
         response = self.client.post(
@@ -394,7 +407,10 @@ class HabitTestCase(APITestCase):
 
         self.assertEqual(
             response.json(),
-            {'non_field_errors': ['У приятной привычки не может быть награды.']}
+            {'non_field_errors': [
+                'У приятной привычки не может быть награды.'
+                ]
+             }
         )
 
     def test_check_related_validator(self):
@@ -404,17 +420,17 @@ class HabitTestCase(APITestCase):
             - у связанной привычки не может быть награды.
         """
 
-        data = {'id': 5, 
-                'place': 'underdark', 
-                'time': '13:13:00', 
-                'activity': 'to fear or not to fear', 
-                'is_pleasant': False, 
-                'period': 'daily', 
-                'reward': "GLOOORYYY", 
-                'time_required': 100, 
-                'is_published': False, 
+        data = {'id': 5,
+                'place': 'underdark',
+                'time': '13:13:00',
+                'activity': 'to fear or not to fear',
+                'is_pleasant': False,
+                'period': 'daily',
+                'reward': "GLOOORYYY",
+                'time_required': 100,
+                'is_published': False,
                 'owner': 1,
-                'related_habit':1
+                'related_habit': 1
                 }
 
         response = self.client.post(
@@ -429,7 +445,10 @@ class HabitTestCase(APITestCase):
 
         self.assertEqual(
             response.json(),
-            {'non_field_errors': ['У привязываемой привычки не может быть награды.']}
+            {'non_field_errors': [
+                'У привязываемой привычки не может быть награды.'
+                ]
+             }
         )
 
     def test_check_pleasant_validator(self):
@@ -439,16 +458,16 @@ class HabitTestCase(APITestCase):
              - связываемая привычка должна быть приятной.
         """
 
-        data = {'id': 5, 
-                'place': 'underdark', 
-                'time': '13:13:00', 
-                'activity': 'to fear or not to fear', 
-                'is_pleasant': False, 
-                'period': 'daily', 
-                'time_required': 100, 
-                'is_published': False, 
+        data = {'id': 5,
+                'place': 'underdark',
+                'time': '13:13:00',
+                'activity': 'to fear or not to fear',
+                'is_pleasant': False,
+                'period': 'daily',
+                'time_required': 100,
+                'is_published': False,
                 'owner': 1,
-                'related_habit':1
+                'related_habit': 1
                 }
 
         response = self.client.post(
@@ -463,12 +482,15 @@ class HabitTestCase(APITestCase):
 
         self.assertEqual(
             response.json(),
-            {'non_field_errors': ['Чтобы связать привычку, она должна быть приятной.']}
+            {'non_field_errors': [
+                'Чтобы связать привычку, она должна быть приятной.'
+                ]
+             }
         )
 
     def test_check_time_validator(self):
         """
-        Тест валидатора TimeValidator, проверяющего, 
+        Тест валидатора TimeValidator, проверяющего,
         что время выполнения должно быть не больше 120 секунд.
         """
 
@@ -489,6 +511,7 @@ class HabitTestCase(APITestCase):
         self.assertEqual(
             response.json(),
             {'non_field_errors': [
-                'Время выполнения привычки не должно быть более 120 секунд, капуша!'
+                'Время выполнения привычки не должно быть более 120 секунд, '
+                'капуша!'
             ]}
         )

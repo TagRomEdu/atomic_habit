@@ -20,7 +20,7 @@ class HabitListAPIView(generics.ListAPIView):
     serializer_class = HabitSerializer
     queryset = Habit.objects.all()
     pagination_class = HabitPaginator
-    
+
     def get_queryset(self):
         return Habit.objects.filter(owner=self.request.user)
 
@@ -33,7 +33,7 @@ class HabitPublishListAPIView(generics.ListAPIView):
     queryset = Habit.objects.filter(is_published=True)
     pagination_class = HabitPaginator
 
-    
+
 class HabitRetrieveAPIView(generics.RetrieveAPIView):
     """
     Контроллер для просмотра привычки.

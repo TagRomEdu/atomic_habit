@@ -27,10 +27,14 @@ def get_tg_user_id():
     """
 
     for user in User.objects.filter(~Q(telegram=None)):
-        
-        response = requests.get(f'{settings.TG_URL}/bot{settings.TG_BOT_API}/getUpdates').json()
-        user_id = next((item["message"]["from"]["id"] for item in response["result"] if
-                                item["message"]["from"]["username"] == user.telegram), None)
+
+        response = requests.get(
+            f'{settings.TG_URL}/bot{settings.TG_BOT_API}/getUpdates'
+            ).json()
+        user_id = next(
+            (item["message"]["from"]["id"] for item in response["result"]
+             if item["message"]["from"]["username"] == user.telegram), None
+             )
 
         if user_id:
             user.tg_id = user_id
@@ -42,15 +46,22 @@ def tg_integration():
     """
     Периодическая задача для отправки уведомления о привычке в tg.
     """
-    
+
     date_time = timezone.datetime.now()
     weekday = date_time.date().weekday()
 
-    utc_time = list(time.strftime("%H:%M", time.localtime(time.time())))  # Получаем время в UTC
+    # Получаем время в UTC
+    utc_time = list(time.strftime("%H:%M", time.localtime(time.time())))
     utc_time[1] = str(int(utc_time[1]) + 3)  # Переводим в Московское
     habit_time = ''.join(utc_time)  # Превращаем обратно в строку
 
-    habits = Habit.objects.filter(time=habit_time, period__in=[WEEKDAY[weekday], 'daily', 'hourly'])
+    habits = Habit.objects.filter(time=habit_time,
+                                  period__in=[
+                                      WEEKDAY[weekday],
+                                      'daily',
+                                      'hourly'
+                                      ]
+                                  )
 
     if habits:
         for habit in habits:
@@ -59,5 +70,7 @@ def tg_integration():
                     'chat_id': habit.owner.tg_id,
                     'text': habit
                 }
-                requests.post(f'{settings.TG_URL}/bot{settings.TG_BOT_API}/sendMessage', params=params)
-                
+                requests.post(
+                    f'{settings.TG_URL}/bot{settings.TG_BOT_API}/sendMessage',
+                    params=params
+                    )
