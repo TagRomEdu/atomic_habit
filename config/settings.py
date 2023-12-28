@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     'drf_yasg',
+    'corsheaders',
     'django_celery_beat',
 
     'users_app',
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -169,11 +171,11 @@ CELERY_BROKER_URL = 'redis://localhost:6379'
 
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 
-CELERY_TIMEZONE = "Australia/Tasmania"
+CELERY_TIMEZONE = "Europe/Moscow"
 
 CELERY_TASK_TRACK_STARTED = True
 
-CELERY_TASK_TIME_LIMIT = 1 * 60
+CELERY_TASK_TIME_LIMIT = 30 * 60
 
 EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
@@ -182,8 +184,27 @@ EMAIL_HOST_PASSWORD = os.getenv('YA_PASS')
 EMAIL_USE_SSL = True
 
 CELERY_BEAT_SCHEDULE = {
-    'task-name': {
-        'task': 'users_app.tasks.check_user_activity',
-        'schedule': timedelta(days=1)
+    'tg_id_catcher': {
+        'task': 'habits_app.tasks.get_tg_user_id',
+        'schedule': timedelta(minutes=1)
+    },
+    'habit_watcher': {
+        'task': 'habits_app.tasks.tg_integration',
+        'schedule': timedelta(minutes=1)
     }
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "https://read-only.example.com",  # Замените на адрес вашего бэкенд-сервера
+    "https://read-and-write.example.com",  # и добавьте адрес фронтенд-сервера
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://read-and-write.example.com", #  Замените на адрес вашего фронтенд-сервера 
+    
+]
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+TG_URL = 'https://api.telegram.org'
+TG_BOT_API = os.getenv('TG_BOT_API')
