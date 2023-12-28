@@ -29,7 +29,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'django_filters',
     'drf_yasg',
+    'corsheaders',
     'django_celery_beat',
 
     'users_app',
@@ -53,6 +54,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -89,9 +91,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'atomic_habits',
-        'USER': 'postgres',
-        'PASSWORD': os.getenv('PASSWORD')
+        'NAME': os.getenv('POSTGRES_DB'),
+        'USER': os.getenv('POSTGRES_USER'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+        'HOST': os.getenv('DB_HOST')
     }
 }
 
@@ -101,16 +104,20 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
@@ -143,8 +150,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users_app.User'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
-    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated']
+    'DEFAULT_AUTHENTICATION_CLASSES':
+        (
+            'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ),
+    'DEFAULT_PERMISSION_CLASSES':
+        [
+            'rest_framework.permissions.IsAuthenticated'
+        ]
 }
 
 CACHE_ENABLED = os.getenv('CACHE_ENABLED') == 'True'
@@ -165,29 +178,44 @@ SWAGGER_SETTINGS = {
     },
 }
 
-CELERY_BROKER_URL = 'redis://localhost:6379'  # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL')
 
-# URL-адрес брокера результатов, также Redis
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = os.getenv('CELERY_RESULT_BACKEND')
 
-# Часовой пояс для работы Celery
-CELERY_TIMEZONE = "Australia/Tasmania"
+CELERY_TIMEZONE = "Europe/Moscow"
 
-# Флаг отслеживания выполнения задач
 CELERY_TASK_TRACK_STARTED = True
 
-# Максимальное время на выполнение задачи
-CELERY_TASK_TIME_LIMIT = 1 * 60
+CELERY_TASK_TIME_LIMIT = 30 * 60
 
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_HOST_USER = 'm@sster.ru'
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('YA_PASS')
 EMAIL_USE_SSL = True
 
 CELERY_BEAT_SCHEDULE = {
-    'task-name': {
-        'task': 'users_app.tasks.check_user_activity',
-        'schedule': timedelta(days=1)
+    'tg_id_catcher': {
+        'task': 'habits_app.tasks.get_tg_user_id',
+        'schedule': timedelta(minutes=1)
+    },
+    'habit_watcher': {
+        'task': 'habits_app.tasks.tg_integration',
+        'schedule': timedelta(minutes=1)
     }
 }
+
+CORS_ALLOWED_ORIGINS = [
+    "https://read-only.example.com",  # Замените на адрес вашего бэкенд-сервера
+    "https://read-and-write.example.com",  # и добавьте адрес фронтенд-сервера
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    # Замените на адрес вашего фронтенд-сервера
+    "https://read-and-write.example.com",
+]
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+TG_URL = 'https://api.telegram.org'
+TG_BOT_API = os.getenv('TG_BOT_API')

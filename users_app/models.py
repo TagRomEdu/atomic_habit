@@ -13,6 +13,9 @@ class User(AbstractUser):
     first_name = models.CharField(_("first name"), max_length=150)
     last_name = models.CharField(_("last name"), max_length=150)
     phone = models.IntegerField(_("phone"), **NULLABLE)
+    telegram = models.CharField(max_length=150, verbose_name='telegram',
+                                **NULLABLE)
+    tg_id = models.IntegerField(verbose_name='id telegram', **NULLABLE)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
