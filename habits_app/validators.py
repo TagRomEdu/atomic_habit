@@ -2,6 +2,12 @@ from rest_framework.serializers import ValidationError
 
 
 class RewardPleasantValidator:
+    """
+    Проверка, на то, что:
+    - нельзя выбрать одновременно вознаграждение и связанную привычку;
+    - у связанной привычки не может быть награды;
+    - связываемая привычка должна быть приятной.
+    """
     def __init__(self, field_1, field_2, field_3):
         self.field_1 = field_1
         self.field_2 = field_2
@@ -22,6 +28,9 @@ class RewardPleasantValidator:
 
 
 class TimeValidator:
+    """
+    Проверка, что время выполнения должно быть не больше 120 секунд.
+    """
     def __init__(self, field_1):
         self.field_1 = field_1
 

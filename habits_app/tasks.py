@@ -46,9 +46,9 @@ def tg_integration():
     date_time = timezone.datetime.now()
     weekday = date_time.date().weekday()
 
-    utc_time = list(time.strftime("%H:%M", time.localtime(time.time())))
-    utc_time[1] = str(int(utc_time[1]) + 3)
-    habit_time = ''.join(utc_time)
+    utc_time = list(time.strftime("%H:%M", time.localtime(time.time())))  # Получаем время в UTC
+    utc_time[1] = str(int(utc_time[1]) + 3)  # Переводим в Московское
+    habit_time = ''.join(utc_time)  # Превращаем обратно в строку
 
     habits = Habit.objects.filter(time=habit_time, period__in=[WEEKDAY[weekday], 'daily', 'hourly'])
 
