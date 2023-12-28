@@ -10,7 +10,8 @@ class Command(BaseCommand):
             first_name='Romka',
             last_name='T',
             is_staff=True,
-            is_superuser=True
+            is_superuser=True,
+            telegram ='Tagrom',
         )
 
         user.set_password('Aa12345!')
